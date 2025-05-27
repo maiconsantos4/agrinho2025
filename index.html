@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Verde do Saber</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --verde-escuro: #22543d;
+      --verde-medio: #2f855a;
+      --verde-claro: #68d391;
+      --fundo: #f0fdf4;
+      --texto: #1a202c;
+      --branco: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--fundo);
+      color: var(--texto);
+      line-height: 1.7;
+    }
+
+    header {
+      background: linear-gradient(135deg, var(--verde-escuro), var(--verde-medio));
+      color: var(--branco);
+      padding: 3rem 2rem;
+      text-align: center;
+      border-bottom: 8px solid var(--verde-claro);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    header h1 {
+      font-size: 3rem;
+      font-weight: 800;
+    }
+
+    header p {
+      font-size: 1.3rem;
+      margin-top: 1rem;
+    }
+
+    nav {
+      background-color: var(--verde-escuro);
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 2rem;
+      padding: 1.2rem;
+    }
+
+    nav a {
+      color: var(--branco);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      transition: all 0.3s ease-in-out;
+    }
+
+    nav a:hover {
+      background-color: var(--verde-claro);
+      color: var(--verde-escuro);
+    }
+
+    section {
+      max-width: 1100px;
+      margin: 3rem auto;
+      padding: 2.5rem;
+      background-color: var(--branco);
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease;
+    }
+
+    section:hover {
+      transform: scale(1.01);
+    }
+
+    section h2 {
+      font-size: 2.2rem;
+      color: var(--verde-medio);
+      margin-bottom: 1rem;
+    }
+
+    section p {
+      font-size: 1.1rem;
+      color: #2d3748;
+    }
+
+    footer {
+      background-color: var(--verde-escuro);
+      color: var(--branco);
+      text-align: center;
+      padding: 2rem;
+      margin-top: 4rem;
+      border-top: 5px solid var(--verde-claro);
+    }
+
+    footer p {
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      section {
+        margin: 1.5rem;
+        padding: 2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Portal Verde do Saber</h1>
+    <p>Educação, Inovação e Sustentabilidade em um só lugar</p>
+  </header>
+
+  <nav>
+    <a href="#blog">Blog</a>
+    <a href="#desafios">Desafios</a>
+    <a href="#galeria">Galeria</a>
+    <a href="#quiz">Quiz</a>
+    <a href="#contato">Contato</a>
+  </nav>
+
+  <section id="blog">
+    <h2>🌱 Blog Sustentável</h2>
+    <p>Artigos semanais sobre práticas ecológicas, juventude protagonista e as últimas novidades em tecnologia verde. Aprenda, reflita e compartilhe!</p>
+  </section>
+
+  <section id="desafios">
+    <h2>🔥 Desafios do Mês</h2>
+    <p>Coloque sua consciência ambiental em prática! Participe dos desafios mensais como "7 dias sem plástico", "Economize Água" e "Reciclagem Criativa". Mostre sua evolução e inspire os outros!</p>
+  </section>
+
+  <section id="galeria">
+    <h2>📸 Galeria Verde</h2>
+    <p>Veja as ações incríveis feitas por outros jovens conscientes: hortas urbanas, mutirões de limpeza, oficinas ecológicas e muito mais. Envie sua foto ou vídeo e ganhe destaque no nosso mural!</p>
+  </section>
+
+  <section id="quiz">
+    <h2>🧠 Quiz Sustentável</h2>
+    <p>Teste seus conhecimentos com quizzes rápidos e educativos. Você consegue acertar todas as perguntas sobre meio ambiente, consumo consciente e energias renováveis?</p>
+  </section>
+
+  <section id="contato">
+    <h2>📬 Fale Conosco</h2>
+    <p>Quer sugerir um tema, relatar um projeto ou tirar dúvidas? Escreva para a nossa equipe pelo e-mail: <strong>contato@verdeeduca.com</strong></p>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Portal Verde do Saber — Inspirando mentes jovens a cuidar do planeta.</p>
+  </footer>
+</body>
+
+</html>
