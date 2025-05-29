@@ -1,11 +1,11 @@
-<!DOCTYPE html>
+<<!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Portal Verde do Saber</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet" />
   <style>
     :root {
       --verde-escuro: #22543d;
@@ -21,88 +21,106 @@
       padding: 0;
       box-sizing: border-box;
       font-family: 'Inter', sans-serif;
-      scroll-behavior: smooth;
     }
 
     body {
       background-color: var(--fundo);
       color: var(--texto);
-      line-height: 1.7;
     }
 
     header {
       background: linear-gradient(135deg, var(--verde-escuro), var(--verde-medio));
       color: var(--branco);
-      padding: 3rem 2rem;
       text-align: center;
-      border-bottom: 8px solid var(--verde-claro);
-      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      padding: 3rem 1rem 2rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      border-bottom: 6px solid var(--verde-claro);
     }
 
     header h1 {
-      font-size: 3rem;
-      font-weight: 800;
+      font-size: 2.8rem;
+      font-weight: 900;
     }
 
     header p {
       font-size: 1.3rem;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
     }
 
-    nav {
-      background-color: var(--verde-escuro);
+    .tab-buttons {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 2rem;
-      padding: 1.2rem;
+      background-color: var(--verde-escuro);
+      padding: 1rem;
+      gap: 0.8rem;
     }
 
-    nav a {
+    .tab-buttons button {
+      background: transparent;
+      border: none;
       color: var(--branco);
-      text-decoration: none;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 1rem;
-      padding: 0.5rem 1rem;
+      cursor: pointer;
+      padding: 0.6rem 1.4rem;
       border-radius: 0.5rem;
-      transition: all 0.3s ease-in-out;
+      position: relative;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    nav a:hover {
+    .tab-buttons button::after {
+      content: "│";
+      color: #ffffff66;
+      position: absolute;
+      right: -1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .tab-buttons button:last-child::after {
+      content: "";
+    }
+
+    .tab-buttons button:hover,
+    .tab-buttons button.active {
       background-color: var(--verde-claro);
       color: var(--verde-escuro);
     }
 
-    section {
-      max-width: 1100px;
-      margin: 3rem auto;
-      padding: 2.5rem;
+    .tab-content {
+      display: none;
+      max-width: 1000px;
+      margin: 2rem auto;
       background-color: var(--branco);
-      border-radius: 1.5rem;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-      transition: transform 0.3s ease;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.07);
+      animation: fadeIn 0.4s ease-in-out;
     }
 
-    section:hover {
-      transform: scale(1.01);
+    .tab-content.active {
+      display: block;
     }
 
-    section h2 {
-      font-size: 2.2rem;
+    .tab-content h2 {
       color: var(--verde-medio);
       margin-bottom: 1rem;
+      font-size: 2rem;
     }
 
-    section p {
+    .tab-content p {
       font-size: 1.1rem;
       color: #2d3748;
+      line-height: 1.6;
     }
 
     footer {
       background-color: var(--verde-escuro);
       color: var(--branco);
       text-align: center;
-      padding: 2rem;
+      padding: 2rem 1rem;
       margin-top: 4rem;
       border-top: 5px solid var(--verde-claro);
     }
@@ -111,19 +129,23 @@
       font-size: 0.9rem;
     }
 
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 768px) {
       header h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
       }
 
-      nav {
-        flex-direction: column;
-        align-items: center;
+      .tab-buttons button {
+        padding: 0.5rem 1rem;
+        font-size: 0.95rem;
       }
 
-      section {
-        margin: 1.5rem;
-        padding: 2rem;
+      .tab-buttons button::after {
+        right: -0.6rem;
       }
     }
   </style>
@@ -132,45 +154,56 @@
 <body>
   <header>
     <h1>Portal Verde do Saber</h1>
-    <p>Educação, Inovação e Sustentabilidade em um só lugar</p>
+    <p>Educação, Inovação e Sustentabilidade para um Futuro Melhor</p>
   </header>
 
-  <nav>
-    <a href="#blog">Blog</a>
-    <a href="#desafios">Desafios</a>
-    <a href="#galeria">Galeria</a>
-    <a href="#quiz">Quiz</a>
-    <a href="#contato">Contato</a>
-  </nav>
+  <div class="tab-buttons">
+    <button class="tab-link active" onclick="openTab(event, 'blog')">Blog</button>
+    <button class="tab-link" onclick="openTab(event, 'desafios')">Desafios</button>
+    <button class="tab-link" onclick="openTab(event, 'galeria')">Galeria</button>
+    <button class="tab-link" onclick="openTab(event, 'quiz')">Quiz</button>
+    <button class="tab-link" onclick="openTab(event, 'contato')">Contato</button>
+  </div>
 
-  <section id="blog">
+  <div id="blog" class="tab-content active">
     <h2>🌱 Blog Sustentável</h2>
-    <p>Artigos semanais sobre práticas ecológicas, juventude protagonista e as últimas novidades em tecnologia verde. Aprenda, reflita e compartilhe!</p>
-  </section>
+    <p>Explore artigos sobre práticas ecológicas, protagonismo jovem e tecnologias que ajudam o planeta. Atualizações semanais com conteúdo relevante e inspirador.</p>
+  </div>
 
-  <section id="desafios">
+  <div id="desafios" class="tab-content">
     <h2>🔥 Desafios do Mês</h2>
-    <p>Coloque sua consciência ambiental em prática! Participe dos desafios mensais como "7 dias sem plástico", "Economize Água" e "Reciclagem Criativa". Mostre sua evolução e inspire os outros!</p>
-  </section>
+    <p>Participe de ações práticas para um mundo melhor! Ex: "7 dias sem plástico", "Crie uma composteira" e muito mais. Mostre seu impacto e compartilhe com a comunidade!</p>
+  </div>
 
-  <section id="galeria">
+  <div id="galeria" class="tab-content">
     <h2>📸 Galeria Verde</h2>
-    <p>Veja as ações incríveis feitas por outros jovens conscientes: hortas urbanas, mutirões de limpeza, oficinas ecológicas e muito mais. Envie sua foto ou vídeo e ganhe destaque no nosso mural!</p>
-  </section>
+    <p>Veja imagens de projetos sustentáveis, hortas escolares, mutirões de limpeza e muito mais. Envie o seu também e inspire outros jovens protagonistas!</p>
+  </div>
 
-  <section id="quiz">
+  <div id="quiz" class="tab-content">
     <h2>🧠 Quiz Sustentável</h2>
-    <p>Teste seus conhecimentos com quizzes rápidos e educativos. Você consegue acertar todas as perguntas sobre meio ambiente, consumo consciente e energias renováveis?</p>
-  </section>
+    <p>Teste seu conhecimento com quizzes sobre o meio ambiente, reciclagem, energias renováveis e cidadania ecológica. Aprenda brincando e se desafie!</p>
+  </div>
 
-  <section id="contato">
+  <div id="contato" class="tab-content">
     <h2>📬 Fale Conosco</h2>
-    <p>Quer sugerir um tema, relatar um projeto ou tirar dúvidas? Escreva para a nossa equipe pelo e-mail: <strong>contato@verdeeduca.com</strong></p>
-  </section>
+    <p>Tem dúvidas ou quer compartilhar seu projeto? Fale com nossa equipe: <strong>contato@verdeeduca.com</strong></p>
+  </div>
 
   <footer>
-    <p>&copy; 2025 Portal Verde do Saber — Inspirando mentes jovens a cuidar do planeta.</p>
+    <p>&copy; 2025 Portal Verde do Saber — Um projeto para transformar o mundo com educação e sustentabilidade.</p>
   </footer>
+
+  <script>
+    function openTab(evt, tabId) {
+      const tabs = document.querySelectorAll(".tab-content");
+      const links = document.querySelectorAll(".tab-link");
+      tabs.forEach(t => t.classList.remove("active"));
+      links.forEach(l => l.classList.remove("active"));
+      document.getElementById(tabId).classList.add("active");
+      evt.currentTarget.classList.add("active");
+    }
+  </script>
 </body>
 
 </html>
