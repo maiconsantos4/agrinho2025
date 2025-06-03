@@ -13,20 +13,26 @@
       --fundo: #f0fdf4;
       --texto: #1a202c;
       --branco: #ffffff;
+      --cor-borda-input: #cbd5e0; /* Nova cor para bordas de input */
+      --cor-fundo-input: #edf2f7; /* Nova cor para fundo de input */
     }
 
     html, body {
       height: 100%;
       margin: 0;
+      scroll-behavior: smooth; /* Smooth scrolling for anchor links */
     }
 
     body {
-      background: linear-gradient(to bottom, #f0fdf4, #e6fffa);
+      background: linear-gradient(to bottom, var(--fundo), #e6fffa);
       color: var(--texto);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
     }
 
     .wrapper {
-      min-height: calc(100vh - 200px);
+      flex: 1; /* Allows wrapper to grow and push footer to bottom */
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
@@ -37,89 +43,86 @@
       font-family: 'Inter', sans-serif;
     }
 
+    /* Header Styling */
     header {
       background: linear-gradient(135deg, var(--verde-escuro), var(--verde-medio));
       color: var(--branco);
       text-align: center;
-      padding: 4rem 2rem 2rem;
+      padding: 5rem 2rem 3rem; /* Increased padding for better visual space */
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
       border-bottom: 6px solid var(--verde-claro);
+      position: relative;
+      overflow: hidden; /* For potential background effects */
     }
 
     header h1 {
-      font-size: 3rem;
+      font-size: 3.5rem; /* Slightly larger heading */
       font-weight: 900;
       letter-spacing: -1px;
+      margin-bottom: 0.5rem;
       animation: fadeInDown 0.7s ease-out;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
     }
 
     header p {
-      font-size: 1.4rem;
+      font-size: 1.5rem; /* Slightly larger tagline */
       margin-top: 1rem;
-      opacity: 0.9;
+      opacity: 0.95;
       animation: fadeInDown 1s ease-out;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
     }
 
+    /* Tab Buttons Navigation */
     .tab-buttons {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       background-color: var(--verde-escuro);
       padding: 1rem;
-      gap: 1rem;
+      gap: 1.2rem; /* Increased gap between buttons */
       position: sticky;
       top: 0;
       z-index: 100;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
 
     .tab-link {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid var(--verde-claro);
-  color: var(--branco);
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  padding: 0.6rem 1.6rem;
-  border-radius: 0.7rem;
-  position: relative;
-  backdrop-filter: blur(6px);
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-}
-
-.tab-link:hover,
-.tab-link.active {
-  background-color: var(--verde-claro);
-  color: var(--verde-escuro);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-}
-
-    .tab-buttons button::after {
-      content: "│";
-      color: #ffffff66;
-      position: absolute;
-      right: -0.8rem;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
+      background: rgba(255, 255, 255, 0.05);
+      border: 2px solid var(--verde-claro);
+      color: var(--branco);
+      font-weight: 700;
+      font-size: 1.1rem; /* Slightly larger font size */
+      cursor: pointer;
+      padding: 0.8rem 2rem; /* More generous padding */
+      border-radius: 0.8rem; /* Slightly more rounded corners */
+      position: relative;
+      backdrop-filter: blur(6px);
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex; /* Use flex for vertical alignment if needed */
+      align-items: center;
+      justify-content: center;
+      text-align: center;
     }
 
-    .tab-buttons button:last-child::after {
-      content: "";
+    .tab-link:hover,
+    .tab-link.active {
+      background-color: var(--verde-claro);
+      color: var(--verde-escuro);
+      transform: translateY(-3px); /* More pronounced lift on hover/active */
+      box-shadow: 0 6px 16px rgba(0,0,0,0.25); /* Stronger shadow */
     }
 
+    /* Tab Content Styling */
     .tab-content {
       display: none;
       max-width: 1000px;
-      margin: 2rem auto;
+      margin: 2.5rem auto; /* More vertical margin */
       background-color: var(--branco);
-      padding: 2.5rem;
-      border-radius: 1.2rem;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-      animation: fadeIn 0.5s ease-in-out;
+      padding: 3rem; /* More internal padding */
+      border-radius: 1.5rem; /* More rounded corners */
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1); /* Stronger shadow */
+      animation: fadeIn 0.6s ease-in-out; /* Slightly longer animation */
     }
 
     .tab-content.active {
@@ -128,22 +131,120 @@
 
     .tab-content h2 {
       color: var(--verde-medio);
-      margin-bottom: 1rem;
-      font-size: 2.2rem;
+      margin-bottom: 1.2rem;
+      font-size: 2.5rem; /* Larger heading for content */
+      border-bottom: 2px solid var(--verde-claro); /* Subtle separator */
+      padding-bottom: 0.5rem;
     }
 
     .tab-content p {
       font-size: 1.15rem;
       color: #2d3748;
       line-height: 1.8;
+      margin-bottom: 1rem;
     }
 
+    /* Contact Form Specific Styling */
+    .contact-form {
+      background-color: #f8fcf9; /* Um fundo mais claro para o formulário */
+      padding: 2.5rem;
+      border-radius: 1rem;
+      border: 1px solid var(--verde-claro);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      margin-top: 2rem;
+    }
+
+    .contact-form label {
+      display: block;
+      margin-bottom: 0.6rem;
+      font-weight: 700;
+      color: var(--verde-escuro);
+      font-size: 1rem;
+    }
+
+    .contact-form input[type="text"],
+    .contact-form input[type="email"],
+    .contact-form textarea {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--cor-borda-input);
+      border-radius: 0.5rem;
+      background-color: var(--cor-fundo-input);
+      font-size: 1rem;
+      color: var(--texto);
+      transition: all 0.3s ease;
+      box-sizing: border-box; /* Important for full width */
+    }
+
+    .contact-form input[type="text"]:focus,
+    .contact-form input[type="email"]:focus,
+    .contact-form textarea:focus {
+      border-color: var(--verde-medio);
+      box-shadow: 0 0 0 3px rgba(104, 211, 145, 0.5); /* Sombra mais suave */
+      outline: none;
+      background-color: var(--branco);
+    }
+
+    .contact-form textarea {
+      resize: vertical;
+      min-height: 150px;
+    }
+
+    .contact-form button {
+      background-color: var(--verde-medio);
+      color: var(--branco);
+      padding: 1rem 2.5rem;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+      font-weight: 700;
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      display: block;
+      margin: 1.5rem auto 0; /* Centraliza o botão e adiciona margem superior */
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .contact-form button:hover {
+      background-color: var(--verde-escuro);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Social Media Links in Contact Section */
+    .contact-social-links {
+      text-align: center;
+      margin-top: 2rem;
+      margin-bottom: 1rem; /* Added margin for separation */
+    }
+
+    .contact-social-links a {
+      display: inline-block;
+      margin: 0 1rem;
+      transition: transform 0.3s ease;
+    }
+
+    .contact-social-links a:hover {
+      transform: scale(1.1);
+    }
+
+    .contact-social-links img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      vertical-align: middle; /* Alinha com o texto se houver */
+    }
+
+    /* Footer Styling */
     .footer {
       background-color: var(--verde-escuro);
       color: var(--branco);
-      padding: 2rem 1rem;
+      padding: 2.5rem 1.5rem; /* More padding */
       border-top: 6px solid var(--verde-claro);
       text-align: center;
+      margin-top: auto; /* Pushes footer to the bottom */
     }
 
     .footer-content {
@@ -151,47 +252,124 @@
       margin: 0 auto;
     }
 
+    .footer-content p {
+      margin-bottom: 0.7rem;
+      font-size: 1.05rem;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
+
+    .footer-content strong {
+      color: var(--verde-claro);
+    }
+
     .footer-links {
-      margin-top: 1rem;
+      margin-top: 1.5rem; /* More space above links */
       display: flex;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 2rem; /* Increased gap for icons */
     }
 
     .footer-links a {
       color: var(--branco);
       text-decoration: none;
-      transition: transform 0.3s, color 0.3s;
+      transition: transform 0.3s ease, color 0.3s ease;
+      font-size: 1.2rem; /* Larger icon size */
+      display: inline-block; /* Ensure transform works */
     }
 
     .footer-links a:hover {
       color: var(--verde-claro);
-      transform: scale(1.2);
+      transform: scale(1.3); /* More pronounced scale effect */
     }
 
+    /* Keyframe Animations */
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
+      from { opacity: 0; transform: translateY(-30px); } /* Stronger initial drop */
       to { opacity: 1; transform: translateY(0); }
     }
 
+    /* Responsive Adjustments */
     @media (max-width: 768px) {
+      header {
+        padding: 4rem 1.5rem 2rem;
+      }
+
       header h1 {
-        font-size: 2.2rem;
+        font-size: 2.5rem;
+      }
+
+      header p {
+        font-size: 1.2rem;
       }
 
       .tab-buttons {
-        gap: 0.5rem;
+        gap: 0.8rem; /* Smaller gap for mobile */
+        padding: 0.8rem;
       }
 
-      .tab-buttons button {
-        font-size: 0.95rem;
-        padding: 0.5rem 1rem;
+      .tab-link {
+        font-size: 1rem;
+        padding: 0.6rem 1.2rem;
       }
+
+      .tab-content {
+        margin: 1.5rem auto;
+        padding: 2rem;
+        border-radius: 1rem;
+      }
+
+      .tab-content h2 {
+        font-size: 2rem;
+      }
+
+      .tab-content p {
+        font-size: 1rem;
+      }
+
+      .contact-form {
+        padding: 1.5rem;
+      }
+
+      .contact-form button {
+        font-size: 1rem;
+        padding: 0.8rem 2rem;
+      }
+
+      .footer {
+        padding: 2rem 1rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+        header h1 {
+            font-size: 2rem;
+        }
+        header p {
+            font-size: 1rem;
+        }
+        .tab-buttons {
+            flex-direction: column; /* Stack buttons vertically on very small screens */
+            gap: 0.5rem;
+        }
+        .tab-link {
+            width: 90%; /* Make buttons full width */
+            margin: 0 auto;
+        }
+        .tab-content {
+            padding: 1.5rem;
+        }
+        .tab-content h2 {
+            font-size: 1.8rem;
+        }
+        .contact-social-links img {
+            width: 35px;
+            height: 35px;
+        }
     }
   </style>
 </head>
@@ -203,24 +381,67 @@
       <p>Educação, Inovação e Sustentabilidade para um Futuro Melhor</p>
     </header>
 
-    <div class="tab-buttons">
-     <a href="blog.html" class="tab-link">Blog</a>
+    <nav class="tab-buttons">
+      <a href="blog.html" class="tab-link">Blog</a>
       <button class="tab-link" onclick="openTab(event, 'galeria')">Galeria</button>
-     <a href="quiz.html" class="botao-quiz">Quiz</a>
+      <a href="quiz.html" class="tab-link">Quiz</a>
       <button class="tab-link" onclick="openTab(event, 'contato')">Contato</button>
-    </div>
+    </nav>
 
-   
+    <main>
+      <section id="galeria" class="tab-content">
+        <h2>Nossa Galeria Sustentável</h2>
+        <p>Explore imagens inspiradoras de projetos sustentáveis, belezas naturais e momentos de aprendizado. Acreditamos que a beleza da natureza e a inovação humana andam de mãos dadas para um futuro mais verde.</p>
+        <p>Fique atento para futuras atualizações com mais fotos e vídeos!</p>
+      </section>
+
+      <section id="contato" class="tab-content">
+        <h2>Fale Conosco</h2>
+        <p>Tem alguma pergunta, sugestão ou quer colaborar com o Portal Verde do Saber? Preencha o formulário abaixo ou entre em contato conosco pelos nossos canais. Estamos sempre abertos a novas ideias e parcerias!</p>
+
+        <p><strong>E-mail:</strong> <a href="mailto:contato@verdeeduca.com" style="color: var(--verde-medio); text-decoration: none;">contato@verdeeduca.com</a></p>
+
+        <div class="contact-social-links">
+            <p><strong>Redes Sociais:</strong> Siga-nos para as últimas novidades e interaja com nossa comunidade!</p>
+            <a href="https://www.instagram.com/portalverdedosaber" target="_blank" rel="noopener noreferrer" title="Instagram do Portal Verde do Saber">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Ícone do Instagram">
+            </a>
+            </div>
+
+        <hr style="border-color: var(--verde-claro); margin: 2rem 0;">
+
+        <h3>Envie-nos uma Mensagem</h3>
+        <p>Use o formulário abaixo para nos enviar sua pergunta, sugestão ou proposta de parceria. Responderemos o mais breve possível!</p>
+        <div class="contact-form">
+          <form action="https://formspree.io/f/YOUR_UNIQUE_ID" method="POST">
+            <label for="nome">Nome Completo:</label>
+            <input type="text" id="nome" name="nome" placeholder="Seu nome" required>
+
+            <label for="email">Seu Melhor E-mail:</label>
+            <input type="email" id="email" name="email" placeholder="nome@exemplo.com" required>
+
+            <label for="assunto">Assunto da Mensagem:</label>
+            <input type="text" id="assunto" name="_subject" placeholder="Ex: Sugestão de tema, Parceria, Dúvida..." required>
+            <label for="mensagem">Sua Mensagem:</label>
+            <textarea id="mensagem" name="mensagem" placeholder="Descreva sua pergunta, sugestão ou proposta aqui..." required></textarea>
+
+            <button type="submit">Enviar Mensagem</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
   <footer class="footer">
     <div class="footer-content">
       <p>&copy; 2025 <strong>Portal Verde do Saber</strong></p>
       <p>Inspirando novas gerações a cuidar do planeta com sabedoria, ação e esperança.</p>
       <div class="footer-links">
         <a href="mailto:contato@verdeeduca.com" title="E-mail">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M2 4a2 2 0 012-2h12a2 2 0 012 2v0.5L10 10 2 4.5V4zM2 6.697l8 5.333 8-5.333V16a2 2 0 01-2 2H4a2 2 0 01-2-2V6.697z"/></svg>
+          <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 2l-8 5-8-5h16zm0 12H4V8l8 5 8-5v10z"/></svg>
         </a>
-        <a href="https://www.instagram.com/portalverdedosaber" target="_blank" title="Instagram">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path d="M7 2C4.24 2 2 4.24 2 7v6c0 2.76 2.24 5 5 5h6c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm0 2h6c1.66 0 3 1.34 3 3v6c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3zm8 1a1 1 0 100 2 1 1 0 000-2zm-4 2a3 3 0 110 6 3 3 0 010-6z"/></svg>
+        <a href="https://www.instagram.com/portalverdedosaber" target="_blank" rel="noopener noreferrer" title="Instagram">
+          <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M7.8 2h8.4C19.4 2 22 4.6 22 7.8v8.4c0 3.2-2.6 5.8-5.8 5.8H7.8C4.6 22 2 19.4 2 16.2V7.8C2 4.6 4.6 2 7.8 2zm0 2C5.7 4 4 5.7 4 7.8v8.4c0 2.1 1.7 3.8 3.8 3.8h8.4c2.1 0 3.8-1.7 3.8-3.8V7.8c0-2.1-1.7-3.8-3.8-3.8H7.8zM12 7a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm6.5-3a1.5 1.5 0 100 3 1.5 1.5 0 000-3z"/></svg>
         </a>
       </div>
     </div>
@@ -228,13 +449,50 @@
 
   <script>
     function openTab(evt, tabId) {
-      const tabs = document.querySelectorAll(".tab-content");
-      const links = document.querySelectorAll(".tab-link");
-      tabs.forEach(t => t.classList.remove("active"));
-      links.forEach(l => l.classList.remove("active"));
+      // Get all tab content elements and hide them
+      const tabContents = document.querySelectorAll(".tab-content");
+      tabContents.forEach(content => {
+        content.classList.remove("active");
+      });
+
+      // Get all tab link buttons and remove the "active" class
+      const tabLinks = document.querySelectorAll(".tab-link");
+      tabLinks.forEach(link => {
+        link.classList.remove("active");
+      });
+
+      // Show the current tab, and add an "active" class to the button that opened the tab
       document.getElementById(tabId).classList.add("active");
       evt.currentTarget.classList.add("active");
+
+      // Optional: Scroll to the top of the tab content for better UX on smaller screens
+      const mainContent = document.querySelector('main');
+      if (mainContent) {
+        mainContent.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
+
+    // Set the initial active tab (e.g., 'galeria') when the page loads
+    document.addEventListener('DOMContentLoaded', () => {
+        // Check if there's a hash in the URL to open a specific tab
+        const urlParams = new URLSearchParams(window.location.search);
+        const initialTab = urlParams.get('tab') || 'galeria'; // Default to 'galeria'
+
+        // Find the button that corresponds to the initial tab
+        const initialTabButton = Array.from(document.querySelectorAll('.tab-link'))
+            .find(button => button.onclick && button.onclick.toString().includes(`'${initialTab}'`));
+
+        if (initialTabButton) {
+            initialTabButton.click(); // Simulate a click on the button to activate the tab
+        } else {
+            // Fallback: if no specific tab is found, activate the first clickable tab
+            const firstClickableTab = document.querySelector('.tab-buttons button.tab-link');
+            if (firstClickableTab) {
+                 firstClickableTab.click();
+            }
+        }
+    });
+
   </script>
 </body>
 

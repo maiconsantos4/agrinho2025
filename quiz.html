@@ -47,7 +47,8 @@
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       border-bottom-left-radius: 15px;
       border-bottom-right-radius: 15px;
-      position: relative; /* For potential future header animations */
+      position: sticky; /* Sticky header */
+      top: 0;
       z-index: 10;
     }
 
@@ -150,6 +151,7 @@
 
     .option-item.disabled-hover {
         cursor: default; /* Change cursor back when disabled */
+        pointer-events: none; /* Disable all pointer events for disabled items */
     }
 
     /* Feedback message for individual options */
@@ -208,17 +210,24 @@
       background-color: var(--cinza-claro-desabilitado);
       color: var(--cinza-texto-desabilitado);
       cursor: not-allowed;
-      opacity: 0.8; /* Slightly less opaque */
+      opacity: 0.7; /* Slightly less opaque */
       box-shadow: none; /* No shadow when disabled */
       transform: translateY(0); /* Remove hover effect when disabled */
     }
 
     /* --- Results Area --- */
     #results-area {
-      display: none;
+      display: none; /* Inicialmente oculto */
       text-align: center;
       margin-top: 3rem;
       animation: fadeInScale 0.7s ease-out;
+
+      /* --- DEPURACAO TEMPORARIA --- */
+      background-color: lightblue; /* Mude para uma cor bem visível */
+      border: 3px dashed red; /* Borda para demarcar a área */
+      min-height: 200px; /* Garante que tenha uma altura para ser visível */
+      padding: 20px; /* Adicione padding para o conteúdo não ficar colado na borda */
+      /* --- FIM DEPURACAO TEMPORARIA --- */
     }
 
     #score-display {
@@ -257,6 +266,8 @@
       border-top-left-radius: 15px;
       border-top-right-radius: 15px;
       box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
+      position: sticky; /* Sticky footer */
+      bottom: 0;
       z-index: 10;
     }
 
@@ -369,7 +380,7 @@
 
   <main class="quiz-container">
     <img id="question-image" alt="Imagem ilustrativa da pergunta">
-    <div id="question-display">Carregando o desafio...</div>
+    <div id="question-display" aria-live="polite">Carregando o desafio...</div>
     <ul id="options-container" class="options-list"></ul>
 
     <div class="quiz-navigation">
@@ -521,6 +532,9 @@
      * @param {number} index - The index of the question to display.
      */
     function showQuestion(index) {
+      // DEPURACAO: Log quando uma nova pergunta é exibida
+      console.log(`DEPURACAO: Exibindo pergunta #${index}. Modo de revisão: ${isReviewMode}`);
+
       // Clear previous content and animate in new question
       DOM.questionImage.style.display = "none";
       DOM.questionDisplay.style.opacity = 0;
@@ -559,7 +573,7 @@
             }
           };
         } else {
-            // In review mode, disable hover effects on already selected items
+            // In review mode, disable hover effects and interaction on all options
             li.classList.add('disabled-hover');
         }
         
@@ -568,12 +582,14 @@
 
       // Apply answer state if already answered
       if (answeredQuestions[index] !== null) {
+        // DEPURACAO: Aplicando estado da resposta para pergunta já respondida
+        console.log(`DEPURACAO: Pergunta #${index} já respondida. Aplicando estado.`);
         applyAnswerState(index);
       }
 
       updateNavigationButtons();
-      // Ensure focus on first option for keyboard navigation in review mode
-      if (isReviewMode && DOM.optionsContainer.firstElementChild) {
+      // Ensure focus on first option for keyboard navigation if in review mode or a fresh question
+      if (DOM.optionsContainer.firstElementChild && !isReviewMode) {
         DOM.optionsContainer.firstElementChild.focus();
       }
     }
@@ -585,19 +601,24 @@
      * @param {number} correctIndex - The index of the correct option.
      */
     function handleAnswerSelection(element, selectedIndex, correctIndex) {
+      // DEPURACAO: Resposta selecionada para pergunta #${currentQuestionIndex}: ${selectedIndex}
+      console.log(`DEPURACAO: Resposta selecionada para pergunta #${currentQuestionIndex}: ${selectedIndex}`);
+
       // Prevent re-answering if already answered
-      if (answeredQuestions[currentQuestionIndex] !== null) {
+      if (answeredQuestions[currentQuestionIndex] !== null || isReviewMode) {
+        // DEPURACAO: Tentativa de re-responder ou responder em modo de revisão, ignorada.
+        console.log("DEPURACAO: Tentativa de re-responder ou responder em modo de revisão, ignorada.");
         return;
       }
 
       // Record the answer
       answeredQuestions[currentQuestionIndex] = selectedIndex;
 
-      // Disable further clicks/keyboard events on options
+      // Disable further clicks/keyboard events on options and apply disabled-hover class
       Array.from(DOM.optionsContainer.children).forEach(opt => {
         opt.onclick = null;
         opt.onkeydown = null;
-        opt.classList.add('disabled-hover'); // Add class to remove hover effect
+        opt.classList.add('disabled-hover');
       });
 
       // Apply styling and feedback
@@ -607,11 +628,15 @@
       if (selectedIndex === correctIndex) {
         playSound(Sounds.correct);
         score++;
+        console.log("DEPURACAO: Resposta CORRETA. Score atual:", score);
       } else {
         playSound(Sounds.wrong);
+        console.log("DEPURACAO: Resposta INCORRETA. Score atual:", score);
       }
       
       updateNavigationButtons();
+      // Focus the next button after answering
+      DOM.nextButton.focus();
     }
 
     /**
@@ -620,88 +645,123 @@
      * @param {number} questionIndex - The index of the question to apply state for.
      */
     function applyAnswerState(questionIndex) {
+      // DEPURACAO: Aplicando estado para pergunta #${questionIndex}. Resposta do usuário: ${answeredQuestions[questionIndex]}
+      console.log(`DEPURACAO: Aplicando estado para pergunta #${questionIndex}. Resposta do usuário: ${answeredQuestions[questionIndex]}`);
+
       const q = questions[questionIndex];
       const selectedAnswerIndex = answeredQuestions[questionIndex];
 
-      // Reset all options' states first
+      // Ensure all options are clean before applying new states
       Array.from(DOM.optionsContainer.children).forEach(opt => {
-          opt.classList.remove("correct", "incorrect");
+          opt.classList.remove("correct", "incorrect", "disabled-hover");
           const oldFeedback = opt.querySelector(".feedback-text");
           if (oldFeedback) oldFeedback.remove();
+          // Re-add disabled-hover if in review mode
+          if (isReviewMode) {
+              opt.classList.add('disabled-hover');
+          }
       });
 
       const selectedOptionElement = DOM.optionsContainer.children[selectedAnswerIndex];
       const correctOptionElement = DOM.optionsContainer.children[q.correct];
 
       // Apply styling to selected option
-      if (selectedAnswerIndex === q.correct) {
-        selectedOptionElement.classList.add("correct");
-      } else {
-        selectedOptionElement.classList.add("incorrect");
-        // Highlight correct answer if user was wrong
-        if (correctOptionElement) {
-          correctOptionElement.classList.add("correct");
+      if (selectedAnswerIndex !== null) { // Only apply if an answer was actually selected
+        if (selectedAnswerIndex === q.correct) {
+          selectedOptionElement.classList.add("correct");
+        } else {
+          selectedOptionElement.classList.add("incorrect");
+          // Highlight correct answer if user was wrong
+          if (correctOptionElement) {
+            correctOptionElement.classList.add("correct");
+          }
         }
+
+        // Add feedback text to the selected option
+        const feedbackSpan = document.createElement("span");
+        feedbackSpan.className = "feedback-text";
+        // Show feedback for selected answer, or for correct answer if not selected but highlighted
+        const feedbackText = (selectedAnswerIndex === q.correct || selectedAnswerIndex === null) 
+                             ? q.options[q.correct].feedback 
+                             : q.options[selectedAnswerIndex].feedback;
+        feedbackSpan.textContent = feedbackText;
+        selectedOptionElement.appendChild(feedbackSpan);
       }
 
-      // Add feedback text to the selected option
-      const feedbackSpan = document.createElement("span");
-      feedbackSpan.className = "feedback-text";
-      feedbackSpan.textContent = q.options[selectedAnswerIndex].feedback;
-      selectedOptionElement.appendChild(feedbackSpan);
+      // If in review mode, always show feedback for the correct answer if it's not the selected one
+      if (isReviewMode && selectedAnswerIndex !== q.correct) {
+        const correctFeedbackSpan = document.createElement("span");
+        correctFeedbackSpan.className = "feedback-text";
+        correctFeedbackSpan.textContent = q.options[q.correct].feedback;
+        if (!correctOptionElement.querySelector(".feedback-text")) { // Avoid duplicating
+            correctOptionElement.appendChild(correctFeedbackSpan);
+        }
+      }
     }
+
 
     /**
      * Updates the disabled state and text of navigation buttons.
      */
     function updateNavigationButtons() {
-      DOM.prevButton.disabled = currentQuestionIndex === 0 && !isReviewMode;
-      
+      // DEPURACAO: Atualizando botões de navegação. Index: ${currentQuestionIndex}, Respondeu: ${answeredQuestions[currentQuestionIndex] !== null}
+      console.log(`DEPURACAO: Atualizando botões de navegação. Index: ${currentQuestionIndex}, Respondeu: ${answeredQuestions[currentQuestionIndex] !== null}`);
+
       if (isReviewMode) {
           DOM.prevButton.textContent = currentQuestionIndex === 0 ? "Voltar aos Resultados" : "Anterior";
           DOM.nextButton.textContent = currentQuestionIndex === questions.length - 1 ? "Voltar aos Resultados" : "Próxima";
-          DOM.nextButton.disabled = false; // Always enabled in review mode to allow navigating to end
+          DOM.prevButton.disabled = false; // Always enabled in review mode
+          DOM.nextButton.disabled = false; // Always enabled in review mode
       } else {
           DOM.prevButton.textContent = "Anterior";
           DOM.nextButton.textContent = "Próxima";
+
+          DOM.prevButton.disabled = currentQuestionIndex === 0;
           DOM.nextButton.disabled = answeredQuestions[currentQuestionIndex] === null;
 
           if (currentQuestionIndex === questions.length - 1 && answeredQuestions[currentQuestionIndex] !== null) {
               DOM.nextButton.textContent = "Ver seu Desempenho";
+              // DEPURACAO: Botão Próxima mudou para "Ver seu Desempenho"
+              console.log("DEPURACAO: Botão Próxima mudou para 'Ver seu Desempenho'");
           }
-      }
-      // Special case: If in review mode and on the first question, prev button leads back to results
-      if (isReviewMode && currentQuestionIndex === 0) {
-        DOM.prevButton.disabled = false;
-      }
-      // Special case: If in review mode and on the last question, next button leads back to results
-      if (isReviewMode && currentQuestionIndex === questions.length -1) {
-        DOM.nextButton.disabled = false;
       }
     }
 
     // --- Navigation Event Handlers ---
     DOM.nextButton.onclick = () => {
+      playSound(Sounds.click);
+      // DEPURACAO: Click no botão Próxima. Index atual: ${currentQuestionIndex}
+      console.log(`DEPURACAO: Click no botão Próxima. Index atual: ${currentQuestionIndex}`);
+
       if (currentQuestionIndex < questions.length - 1) {
         currentQuestionIndex++;
         showQuestion(currentQuestionIndex);
       } else {
         // If on last question: show results or go back from review mode
         if (!isReviewMode) {
+          // DEPURACAO: Chamando showResults() ao final do quiz.
+          console.log("DEPURACAO: Chamando showResults() ao final do quiz.");
           showResults();
         } else {
+          // DEPURACAO: Retornando aos resultados do modo de revisão.
+          console.log("DEPURACAO: Retornando aos resultados do modo de revisão.");
           hideQuizAndShowResults();
         }
       }
     };
 
     DOM.prevButton.onclick = () => {
+      playSound(Sounds.click);
+      // DEPURACAO: Click no botão Anterior. Index atual: ${currentQuestionIndex}
+      console.log(`DEPURACAO: Click no botão Anterior. Index atual: ${currentQuestionIndex}`);
       if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
         showQuestion(currentQuestionIndex);
       } else {
         // If on first question in review mode, go back to results
         if (isReviewMode) {
+          // DEPURACAO: Retornando aos resultados do modo de revisão (do botão anterior).
+          console.log("DEPURACAO: Retornando aos resultados do modo de revisão (do botão anterior).");
           hideQuizAndShowResults();
         }
       }
@@ -711,45 +771,75 @@
 
     /** Hides the quiz container and shows the results area. */
     function hideQuizAndShowResults() {
+        console.log("DEPURACAO: hideQuizAndShowResults: Iniciando ocultação do quiz e exibição dos resultados.");
+        
+        // Verifique o display atual antes de mudar
+        console.log("DEPURACAO: Antes da mudança: quiz-container display:", DOM.quizContainer.style.display, "results-area display:", DOM.resultsArea.style.display);
+        
         DOM.quizContainer.style.display = "none";
         DOM.resultsArea.style.display = "block";
-        isReviewMode = false; // Ensure review mode is off when seeing results
+        isReviewMode = false; // Exit review mode
+
+        // Verifique o display depois de mudar
+        console.log("DEPURACAO: Depois da mudança: quiz-container display:", DOM.quizContainer.style.display, "results-area display:", DOM.resultsArea.style.display);
+        
+        console.log("DEPURACAO: hideQuizAndShowResults: Quiz oculto, resultados exibidos.");
     }
 
     /** Displays the final quiz results. */
     function showResults() {
+      // DEPURACAO: showResults: Função showResults chamada. Score atual: ${score}
+      console.log(`DEPURACAO: showResults: Função showResults chamada. Score atual: ${score}`);
       hideQuizAndShowResults();
+      DOM.scoreDisplay.textContent = `Sua Pontuação Final: ${score} de ${questions.length}`;
+      // DEPURACAO: showResults: Texto da pontuação definido.
+      console.log("DEPURACAO: showResults: Texto da pontuação definido.");
 
-      DOM.scoreDisplay.textContent = `Sua Pontuação: ${score} de ${questions.length}`;
 
       if (score === questions.length) {
-        DOM.feedbackMessage.textContent = "🎉 Parabéns! Você é um verdadeiro Expert em Sustentabilidade! Seu conhecimento é inspirador! ✨";
+        DOM.feedbackMessage.innerHTML = "🎉 **Parabéns! Você é um verdadeiro Expert em Sustentabilidade!** Seu conhecimento é inspirador e vital para o futuro do nosso planeta. Continue sendo um agente de mudança! ✨";
         DOM.medalha.textContent = "🥇";
         playSound(Sounds.applause);
+        // DEPURACAO: showResults: Feedback para Expert.
+        console.log("DEPURACAO: showResults: Feedback para Expert.");
       } else if (score >= questions.length / 2) {
-        DOM.feedbackMessage.textContent = "👏 Muito bom! Você tem um ótimo desempenho! Continue aprendendo para se tornar um Guardião completo do Planeta! 🌱";
+        DOM.feedbackMessage.innerHTML = "👏 **Muito bom! Você tem um ótimo desempenho!** Isso mostra que você já está no caminho certo para ser um Guardião do Planeta. Que tal revisar as perguntas e aprofundar ainda mais seu saber verde? 🌱";
         DOM.medalha.textContent = "🥈";
         playSound(Sounds.finish);
+        // DEPURACAO: showResults: Feedback para Ótimo Desempenho.
+        console.log("DEPURACAO: showResults: Feedback para Ótimo Desempenho.");
       } else {
-        DOM.feedbackMessage.textContent = "💡 Não desanime! Cada pergunta é uma oportunidade de aprendizado. Vamos revisar o que errou e tentar de novo para fortalecer seu saber verde! 💪";
+        DOM.feedbackMessage.innerHTML = "💡 **Não desanime! Cada pergunta é uma oportunidade de aprendizado.** O importante é a sua curiosidade e vontade de aprender. Vamos revisar o que errou e tentar de novo para fortalecer seu compromisso com um futuro mais verde! 💪";
         DOM.medalha.textContent = "🥉";
         playSound(Sounds.wrong);
+        // DEPURACAO: showResults: Feedback para Precisa Praticar.
+        console.log("DEPURACAO: showResults: Feedback para Precisa Praticar.");
       }
-      DOM.reviewButton.focus(); // Focus on review button for accessibility
+      DOM.reviewButton.focus(); // Focus review button for accessibility
+      // DEPURACAO: showResults: Fim da função showResults.
+      console.log("DEPURACAO: showResults: Fim da função showResults.");
     }
-
+  
     /** Initiates the review mode, showing answered questions. */
     function reviewAnswers() {
+        // DEPURACAO: reviewAnswers: Iniciando modo de revisão.
+        console.log("DEPURACAO: reviewAnswers: Iniciando modo de revisão.");
         isReviewMode = true;
         currentQuestionIndex = 0; // Start review from the first question
         DOM.quizContainer.style.display = "block";
         DOM.resultsArea.style.display = "none";
         showQuestion(currentQuestionIndex);
         updateNavigationButtons();
+        // Focus the first option in review mode if available
+        if (DOM.optionsContainer.firstElementChild) {
+          DOM.optionsContainer.firstElementChild.focus();
+        }
     }
 
     /** Restarts the quiz by reloading the page. */
     function restartQuiz() {
+      // DEPURACAO: restartQuiz: Reiniciando o quiz.
+      console.log("DEPURACAO: restartQuiz: Reiniciando o quiz.");
       window.location.reload();
     }
 
@@ -758,6 +848,8 @@
     DOM.restartButton.onclick = restartQuiz;
 
     document.addEventListener('DOMContentLoaded', () => {
+      // DEPURACAO: DOMContentLoaded: Inicializando o quiz.
+      console.log("DEPURACAO: DOMContentLoaded: Inicializando o quiz.");
       showQuestion(currentQuestionIndex);
       updateNavigationButtons();
     });
