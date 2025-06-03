@@ -1,255 +1,766 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz do Saber Verde</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css"> <style>
-        /* Estilos específicos para o quiz, adicionados aqui para simplificar */
-        /* Você pode mover estes estilos para 'style.css' ou criar um 'quiz.css' */
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz do Saber Verde</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- CSS Variables for Colors & Styling --- */
+    :root {
+      --verde-escuro: #22543d;
+      --verde-medio: #2f855a;
+      --verde-claro: #68d391;
+      --fundo: #f0fdf4;
+      --texto: #1a202c;
+      --branco: #ffffff;
+      --vermelho-erro: #e53e3e;
+      --verde-acerto: #4CAF50;
+      --cinza-claro-desabilitado: #cccccc;
+      --cinza-texto-desabilitado: #666666;
+    }
 
-        main.quiz-container {
-            max-width: 800px;
-            margin: 3rem auto;
-            background-color: var(--branco);
-            padding: 2.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Sombra mais acentuada */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    /* --- Base Reset & Font --- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        #quiz-area {
-            width: 100%;
-        }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--fundo);
+      color: var(--texto);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden; /* Prevent horizontal scroll on animations */
+    }
 
-        #question-display {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--verde-escuro);
-            margin-bottom: 2rem;
-            text-align: center;
-            line-height: 1.4;
-        }
+    /* --- Header --- */
+    header {
+      background-color: var(--verde-escuro);
+      color: var(--branco);
+      text-align: center;
+      padding: 2.5rem 1rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      border-bottom-left-radius: 15px;
+      border-bottom-right-radius: 15px;
+      position: relative; /* For potential future header animations */
+      z-index: 10;
+    }
 
-        .options-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            width: 100%;
-        }
+    header h1 {
+      font-size: 3rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 1.5px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+    }
 
-        .option-item {
-            background-color: var(--fundo-pagina);
-            border: 1px solid var(--verde-claro);
-            border-radius: 0.75rem;
-            margin-bottom: 1rem;
-            padding: 1rem 1.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 1.1rem;
-            color: var(--verde-escuro);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+    header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
 
-        .option-item:hover {
-            background-color: var(--verde-claro);
-            color: var(--branco);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    /* --- Main Quiz Container --- */
+    .quiz-container {
+      max-width: 850px;
+      margin: 3rem auto;
+      background: var(--branco);
+      padding: 2.5rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Vertically center content if there's extra space */
+    }
 
-        .option-item.selected {
-            background-color: var(--verde-medio);
-            color: var(--branco);
-            border-color: var(--verde-medio);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+    /* --- Question & Image --- */
+    #question-display {
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      font-weight: bold;
+      text-align: center;
+      color: var(--verde-escuro);
+      animation: fadeIn 0.5s ease-out;
+      min-height: 2.5em; /* Prevent layout shift for shorter questions */
+      display: flex; /* For vertical centering of text */
+      align-items: center;
+      justify-content: center;
+    }
 
-        .option-item.correct {
-            background-color: #4CAF50; /* Verde para correto */
-            color: var(--branco);
-            border-color: #4CAF50;
-            font-weight: bold;
-        }
+    #question-image {
+      width: 100%;
+      max-height: 300px;
+      object-fit: cover;
+      margin-bottom: 2rem;
+      border-radius: 1rem;
+      display: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      animation: zoomIn 0.6s ease-out;
+    }
 
-        .option-item.incorrect {
-            background-color: #F44336; /* Vermelho para incorreto */
-            color: var(--branco);
-            border-color: #F44336;
-            font-weight: bold;
-        }
+    /* --- Options List --- */
+    .options-list {
+      list-style: none;
+      padding: 0;
+    }
 
-        .option-item input[type="radio"] {
-            margin-right: 0.8rem;
-            transform: scale(1.3); /* Aumenta o tamanho do radio button */
-            accent-color: var(--verde-escuro); /* Muda a cor do radio button */
-        }
+    .option-item {
+      background: var(--fundo);
+      border: 2px solid var(--verde-claro);
+      border-radius: 1rem;
+      padding: 1.2rem;
+      margin-bottom: 1.2rem;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      color: var(--texto); /* Default text color */
+      user-select: none; /* Prevent text selection */
+      -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+    }
 
-        .quiz-navigation {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            margin-top: 2.5rem;
-        }
+    .option-item:hover:not(.correct):not(.incorrect):not(.disabled-hover) {
+      background: var(--verde-claro);
+      color: var(--branco);
+      transform: translateY(-3px) scale(1.01); /* Subtle lift and slight scale */
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15); /* More prominent shadow on hover */
+    }
 
-        .nav-button {
-            padding: 0.8rem 2rem;
-            border: none;
-            border-radius: 0.75rem;
-            background-color: var(--verde-escuro);
-            color: var(--branco);
-            font-weight: bold;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-        }
+    .option-item.correct {
+      background: var(--verde-acerto);
+      color: var(--branco);
+      border-color: var(--verde-acerto);
+      animation: pulseGreen 0.6s ease-out forwards; /* forwards to keep final state */
+    }
 
-        .nav-button:hover {
-            background-color: var(--verde-medio);
-            transform: translateY(-2px);
-        }
+    .option-item.incorrect {
+      background: var(--vermelho-erro);
+      color: var(--branco);
+      border-color: var(--vermelho-erro);
+      animation: shakeRed 0.5s ease-out;
+    }
 
-        .nav-button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
+    .option-item.disabled-hover {
+        cursor: default; /* Change cursor back when disabled */
+    }
 
-        #results-area {
-            text-align: center;
-            margin-top: 3rem;
-            display: none; /* Escondido inicialmente */
-        }
+    /* Feedback message for individual options */
+    .option-item .feedback-text {
+      font-size: 0.95rem;
+      margin-top: 0.8rem;
+      display: block;
+      font-weight: normal;
+      background: rgba(255,255,255,0.2);
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.5rem;
+      width: 100%;
+      text-align: left;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    }
 
-        #score-display {
-            font-size: 2.5rem;
-            color: var(--verde-escuro);
-            margin-bottom: 1rem;
-        }
+    .option-item.correct .feedback-text,
+    .option-item.incorrect .feedback-text {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
-        #feedback-message {
-            font-size: 1.3rem;
-            color: var(--verde-medio);
-            margin-bottom: 2rem;
-        }
+    /* --- Navigation --- */
+    .quiz-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 2.5rem;
+      gap: 1.5rem;
+    }
 
-        .restart-button {
-            padding: 1rem 2.5rem;
-            background-color: var(--verde-escuro);
-            color: var(--branco);
-            border: none;
-            border-radius: 2rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
+    .nav-button {
+      background-color: var(--verde-medio);
+      color: var(--branco);
+      padding: 1rem 2.5rem;
+      border: none;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+      flex: 1;
+      min-width: 120px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Default button shadow */
+    }
 
-        .restart-button:hover {
-            background-color: var(--verde-claro);
-            color: var(--verde-escuro);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-        }
+    .nav-button:hover:not(:disabled) {
+      background-color: var(--verde-claro);
+      color: var(--verde-escuro);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.25); /* Enhanced hover shadow */
+    }
 
-        /* Responsividade para o quiz */
-        @media (max-width: 768px) {
-            main.quiz-container {
-                margin: 2rem 1rem;
-                padding: 1.5rem;
-            }
+    .nav-button:disabled {
+      background-color: var(--cinza-claro-desabilitado);
+      color: var(--cinza-texto-desabilitado);
+      cursor: not-allowed;
+      opacity: 0.8; /* Slightly less opaque */
+      box-shadow: none; /* No shadow when disabled */
+      transform: translateY(0); /* Remove hover effect when disabled */
+    }
 
-            #question-display {
-                font-size: 1.3rem;
-                margin-bottom: 1.5rem;
-            }
+    /* --- Results Area --- */
+    #results-area {
+      display: none;
+      text-align: center;
+      margin-top: 3rem;
+      animation: fadeInScale 0.7s ease-out;
+    }
 
-            .option-item {
-                font-size: 1rem;
-                padding: 0.8rem 1.2rem;
-            }
+    #score-display {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 1.5rem;
+      color: var(--verde-escuro);
+    }
 
-            .nav-button {
-                padding: 0.6rem 1.5rem;
-                font-size: 1rem;
-            }
+    .medalha {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      animation: tada 1s ease-out;
+    }
 
-            #score-display {
-                font-size: 2rem;
-            }
+    #feedback-message {
+      font-size: 1.3rem;
+      color: var(--texto);
+      margin-bottom: 2rem;
+    }
 
-            #feedback-message {
-                font-size: 1.1rem;
-            }
+    .results-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
 
-            .restart-button {
-                padding: 0.8rem 2rem;
-                font-size: 1.1rem;
-            }
-        }
+    /* --- Footer --- */
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: var(--verde-escuro);
+      color: var(--branco);
+      margin-top: auto;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      box-shadow: 0 -4px 15px rgba(0,0,0,0.3);
+      z-index: 10;
+    }
 
-        @media (max-width: 480px) {
-            main.quiz-container {
-                padding: 1rem;
-            }
+    /* --- Animations --- */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
 
-            #question-display {
-                font-size: 1.1rem;
-            }
+    @keyframes zoomIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
 
-            .option-item {
-                font-size: 0.9rem;
-                padding: 0.7rem 1rem;
-            }
+    @keyframes pulseGreen {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+      70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+      100% { transform: scale(1); }
+    }
 
-            .quiz-navigation {
-                flex-direction: column;
-                gap: 1rem;
-            }
+    @keyframes shakeRed {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+      20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
 
-            .nav-button {
-                width: 100%;
-            }
-        }
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
 
-    </style>
+    @keyframes tada {
+      from {
+        transform: scale3d(1, 1, 1);
+      }
+      10%, 20% {
+        transform: scale3d(0.9, 0.9, 0.9) rotate3d(0, 0, 1, -3deg);
+      }
+      30%, 50%, 70%, 90% {
+        transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, 3deg);
+      }
+      40%, 60%, 80% {
+        transform: scale3d(1.1, 1.1, 1.1) rotate3d(0, 0, 1, -3deg);
+      }
+      to {
+        transform: scale3d(1, 1, 1);
+      }
+    }
+
+    /* --- Responsive Adjustments --- */
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2.2rem;
+      }
+      .quiz-container {
+        margin: 2rem 1rem;
+        padding: 1.5rem;
+      }
+      #question-display {
+        font-size: 1.4rem;
+      }
+      .option-item {
+        font-size: 1rem;
+        padding: 0.9rem;
+      }
+      .nav-button {
+        padding: 0.7rem 1.5rem;
+        font-size: 1rem;
+      }
+      #score-display {
+        font-size: 2rem;
+      }
+      .medalha {
+        font-size: 3rem;
+      }
+      #feedback-message {
+        font-size: 1.1rem;
+      }
+      .results-buttons {
+          flex-direction: column;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header h1 {
+        font-size: 1.8rem;
+      }
+      header p {
+        font-size: 1rem;
+      }
+      .quiz-navigation {
+        flex-direction: column;
+        gap: 0.8rem;
+      }
+      .nav-button {
+        width: 100%;
+      }
+      .option-item .feedback-text {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
-    <header>
-        <h1>Quiz do Saber Verde</h1>
-        <p>Teste seus conhecimentos sobre sustentabilidade!</p>
-    </header>
+  <header>
+    <h1>Quiz do Saber Verde</h1>
+    <p>Teste seus conhecimentos sobre sustentabilidade e o meio ambiente!</p>
+  </header>
 
-    <main class="quiz-container">
-        <div id="quiz-area">
-            <p id="question-display">Carregando pergunta...</p>
-            <ul id="options-container" class="options-list">
-                </ul>
-            <div class="quiz-navigation">
-                <button id="prev-button" class="nav-button" disabled>Anterior</button>
-                <button id="next-button" class="nav-button">Próxima</button>
-            </div>
-        </div>
+  <main class="quiz-container">
+    <img id="question-image" alt="Imagem ilustrativa da pergunta">
+    <div id="question-display">Carregando o desafio...</div>
+    <ul id="options-container" class="options-list"></ul>
 
-        <div id="results-area">
-            <h2 id="score-display"></h2>
-            <p id="feedback-message"></p>
-            <button id="restart-button" class="restart-button">Tentar Novamente</button>
-        </div>
-    </main>
+    <div class="quiz-navigation">
+      <button id="prev-button" class="nav-button" disabled aria-label="Voltar para a pergunta anterior">Anterior</button>
+      <button id="next-button" class="nav-button" disabled aria-label="Ir para a próxima pergunta">Próxima</button>
+    </div>
 
-    <footer>
-        <p>© 2025 Portal Verde do Saber - Quiz</p>
-    </footer>
+    <div id="results-area">
+      <div class="medalha" id="medalha" role="img" aria-label="Medalha de resultado">🏅</div>
+      <div id="score-display"></div>
+      <p id="feedback-message"></p>
+      <div class="results-buttons">
+          <button id="review-button" class="nav-button" aria-label="Revisar todas as respostas">Revisar Respostas</button>
+          <button id="restart-button" class="nav-button" aria-label="Reiniciar o Quiz">Começar de Novo</button>
+      </div>
+    </div>
+  </main>
 
-    <script src="quiz-script.js"></script> </body>
+  <footer>
+    <p>🌿 Portal Verde do Saber — Quiz Sustentável &copy; 2025</p>
+  </footer>
+
+  <audio id="sound-correct" src="https://cdn.pixabay.com/sound/2023/03/17/audio_0305a415a7.mp3" preload="auto"></audio>
+  <audio id="sound-wrong" src="https://cdn.pixabay.com/sound/2022/03/15/audio_f3b204d877.mp3" preload="auto"></audio>
+  <audio id="sound-hover" src="https://cdn.pixabay.com/sound/2023/03/17/audio_a1501a1c3d.mp3" preload="auto"></audio>
+  <audio id="sound-click" src="https://cdn.pixabay.com/sound/2023/03/17/audio_5177a46c1e.mp3" preload="auto"></audio>
+  <audio id="sound-finish" src="https://cdn.pixabay.com/sound/2023/03/17/audio_9273c52a92.mp3" preload="auto"></audio>
+  <audio id="sound-applause" src="https://cdn.pixabay.com/sound/2023/03/17/audio_34b35848e0.mp3" preload="auto"></audio>
+
+
+  <script>
+    // --- Quiz Data ---
+    const questions = [
+      {
+        question: "Qual dessas ações é fundamental para a **conservação da água** no dia a dia?",
+        image: "https://images.unsplash.com/photo-1556761175-4b46a572b786?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMDF8MHwxfHNlYXJjaHwxfHw1MzczNTM4MDU0fGVufDB8fHx8MTcxNzk0NjA5OHww&ixlib=rb-4.0.3&q=80&w=1080",
+        options: [
+          { text: "Deixar a torneira aberta ao escovar os dentes", feedback: "❌ Errado! Deixar a torneira aberta desperdiça litros de água potável." },
+          { text: "Tomar banhos demorados e quentes", feedback: "❌ Errado! Banhos longos e quentes gastam muita água e energia." },
+          { text: "Reutilizar a água da máquina de lavar para limpeza", feedback: "✅ Correto! Reutilizar a água cinza para tarefas domésticas é uma excelente forma de economizar." }
+        ],
+        correct: 2
+      },
+      {
+        question: "Qual material leva **mais tempo** para se decompor na natureza?",
+        image: "https://images.unsplash.com/photo-1581090700227-1c4d0a174c58?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMDF8MHwxfHNlYXJjaHwxfHw1MzczNTM4MDU0fGVufDB8fHx8MTcxNzk0NjA5OHww&ixlib=rb-4.0.3&q=80&w=1080",
+        options: [
+          { text: "Casca de banana", feedback: "🌿 A casca de banana se decompõe em semanas/meses, sendo orgânica e biodegradável." },
+          { text: "Jornal", feedback: "📄 O jornal se decompõe em alguns meses, pois é feito de celulose." },
+          { text: "Garrafa PET de plástico", feedback: "🐢 Correto! Uma garrafa PET pode levar mais de 400 anos para se decompor, sendo um grande problema ambiental." }
+        ],
+        correct: 2
+      },
+      {
+        question: "Qual é a principal vantagem da **energia solar** em relação aos combustíveis fósseis?",
+        image: "https://images.unsplash.com/photo-1509395062183-67c5ad6faff9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMDF8MHwxfHNlYXJjaHwxfHw1MzczNTM4MDU0fGVufDB8fHx8MTcxNzk0NjA5OHww&ixlib=rb-4.0.3&q=80&w=1080",
+        options: [
+          { text: "É mais barata para produzir em larga escala", feedback: "🤔 Embora o custo esteja caindo, a instalação inicial pode ser alta. A vantagem principal é outra." },
+          { text: "Não depende das condições climáticas", feedback: "☁️ Incorreto. A energia solar é mais eficiente em dias ensolarados, embora sistemas modernos consigam gerar em dias nublados." },
+          { text: "É uma fonte de energia limpa e renovável", feedback: "☀️ Correto! A energia solar não emite poluentes nem gases de efeito estufa e sua fonte é inesgotável." }
+        ],
+        correct: 2
+      },
+      {
+        question: "O que é o conceito de **'Pegada Ecológica'**?",
+        image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMDF8MHwxfHNlYXJjaHwxfHw1MzczNTM4MDU0fGVufDB8fHx8MTcxNzk0NjA5OHww&ixlib=rb-4.0.3&q=80&w=1080",
+        options: [
+          { text: "A quantidade de lixo produzida por uma cidade", feedback: "🗑️ Não exatamente. Embora relacionada ao impacto, a pegada ecológica é mais abrangente." },
+          { text: "O tamanho da área de terra necessária para sustentar o estilo de vida de uma pessoa", feedback: "👣 Correto! É uma métrica que calcula a demanda humana por recursos naturais e a capacidade do planeta de regenerá-los." },
+          { text: "A marca deixada por animais selvagens na natureza", feedback: "🐾 Não, é um termo relacionado ao impacto humano no meio ambiente." }
+        ],
+        correct: 1
+      },
+      {
+        question: "Qual é a principal consequência do **desmatamento de grandes florestas** como a Amazônia?",
+        image: "https://images.unsplash.com/photo-1533190899479-7a71f009f3e4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMDF8MHwxfHNlYXJjaHwxfHw1MzczNTM4MDU0fGVufDB8fHx8MTcxNzk0NjA5OHww&ixlib=rb-4.0.3&q=80&w=1080",
+        options: [
+          { text: "Aumento da biodiversidade local", feedback: "❌ Incorreto. O desmatamento leva à perda de habitat e, consequentemente, à diminuição da biodiversidade." },
+          { text: "Melhora da qualidade do ar nas cidades vizinhas", feedback: "💨 Pelo contrário. Florestas absorvem CO2. O desmatamento libera CO2 e reduz a capacidade de purificação do ar." },
+          { text: "Aumento do efeito estufa e perda de biodiversidade global", feedback: "🔥 Correto! O desmatamento libera carbono armazenado nas árvores, contribuindo para o aquecimento global e destruindo habitats de milhares de espécies." }
+        ],
+        correct: 2
+      },
+      {
+        question: "O que significa o conceito de **'3 Rs' da sustentabilidade**?",
+        image: "https://images.unsplash.com/photo-1621434912239-0d3a5a4c9c7c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTIyMDF8MHwxfHNlYXJjaHwxfHw1MzczNTM4MDU0fGVufDB8fHx8MTcxNzk0NjA5OHww&ixlib=rb-4.0.3&q=80&w=1080",
+        options: [
+          { text: "Remover, Reformar, Reutilizar", feedback: "🤔 Quase lá! Mas a ordem e os termos não são os mais reconhecidos." },
+          { text: "Reduzir, Reutilizar, Reciclar", feedback: "♻️ Correto! São as bases para diminuir o impacto ambiental: produzir menos lixo, usar mais vezes e transformar em novos produtos." },
+          { text: "Reparar, Revisar, Replanejar", feedback: "🛠️ Embora sejam ações positivas, não representam os '3 Rs' clássicos da sustentabilidade." }
+        ],
+        correct: 1
+      }
+    ];
+
+    // --- DOM Elements ---
+    const DOM = {
+      questionDisplay: document.getElementById("question-display"),
+      questionImage: document.getElementById("question-image"),
+      optionsContainer: document.getElementById("options-container"),
+      resultsArea: document.getElementById("results-area"),
+      scoreDisplay: document.getElementById("score-display"),
+      feedbackMessage: document.getElementById("feedback-message"),
+      medalha: document.getElementById("medalha"),
+      prevButton: document.getElementById("prev-button"),
+      nextButton: document.getElementById("next-button"),
+      quizContainer: document.querySelector(".quiz-container"),
+      reviewButton: document.getElementById("review-button"),
+      restartButton: document.getElementById("restart-button")
+    };
+
+    // --- Audio Elements ---
+    const Sounds = {
+      correct: new Audio(document.getElementById("sound-correct").src),
+      wrong: new Audio(document.getElementById("sound-wrong").src),
+      hover: new Audio(document.getElementById("sound-hover").src),
+      click: new Audio(document.getElementById("sound-click").src),
+      finish: new Audio(document.getElementById("sound-finish").src),
+      applause: new Audio(document.getElementById("sound-applause").src)
+    };
+
+    // Preload all sounds for faster playback
+    Object.values(Sounds).forEach(sound => {
+      sound.volume = 0.5; // Set a default volume
+      sound.load(); // Load the audio file
+    });
+
+    // --- Quiz State Variables ---
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let answeredQuestions = new Array(questions.length).fill(null); // Stores user's answer index for each question
+    let isReviewMode = false; // Flag to control review mode
+
+    // --- Audio Utility Function ---
+    function playSound(soundElement) {
+      if (soundElement) {
+        soundElement.currentTime = 0; // Rewind to start for immediate playback
+        soundElement.play().catch(e => {
+          // console.warn("Audio playback failed (user interaction required?):", e.message);
+          // This catch is important for browsers that block autoplay
+        });
+      }
+    }
+
+    // --- Core Quiz Logic ---
+
+    /**
+     * Displays a question based on its index.
+     * @param {number} index - The index of the question to display.
+     */
+    function showQuestion(index) {
+      // Clear previous content and animate in new question
+      DOM.questionImage.style.display = "none";
+      DOM.questionDisplay.style.opacity = 0;
+      DOM.optionsContainer.innerHTML = "";
+
+      const q = questions[index];
+      DOM.questionDisplay.textContent = q.question;
+      DOM.questionImage.src = q.image;
+      DOM.questionImage.alt = `Imagem ilustrativa para a pergunta: "${q.question}"`;
+
+      // Animate question and image entrance
+      setTimeout(() => {
+        DOM.questionDisplay.style.opacity = 1;
+        DOM.questionImage.style.display = "block";
+      }, 50);
+
+      q.options.forEach((option, i) => {
+        const li = document.createElement("li");
+        const optionText = document.createElement("span");
+        optionText.textContent = option.text;
+        li.appendChild(optionText);
+
+        li.className = "option-item";
+        li.setAttribute('role', 'button');
+        li.setAttribute('tabindex', '0');
+
+        li.onmouseover = () => playSound(Sounds.hover);
+
+        // Only allow selection if not in review mode
+        if (!isReviewMode) {
+          li.onclick = () => handleAnswerSelection(li, i, q.correct);
+          li.onkeydown = (event) => {
+            if (event.key === 'Enter' || event.key === ' ') { // Also respond to spacebar
+              event.preventDefault(); // Prevent scrolling with spacebar
+              handleAnswerSelection(li, i, q.correct);
+            }
+          };
+        } else {
+            // In review mode, disable hover effects on already selected items
+            li.classList.add('disabled-hover');
+        }
+        
+        DOM.optionsContainer.appendChild(li);
+      });
+
+      // Apply answer state if already answered
+      if (answeredQuestions[index] !== null) {
+        applyAnswerState(index);
+      }
+
+      updateNavigationButtons();
+      // Ensure focus on first option for keyboard navigation in review mode
+      if (isReviewMode && DOM.optionsContainer.firstElementChild) {
+        DOM.optionsContainer.firstElementChild.focus();
+      }
+    }
+
+    /**
+     * Handles the user's answer selection.
+     * @param {HTMLElement} element - The selected list item.
+     * @param {number} selectedIndex - The index of the selected option.
+     * @param {number} correctIndex - The index of the correct option.
+     */
+    function handleAnswerSelection(element, selectedIndex, correctIndex) {
+      // Prevent re-answering if already answered
+      if (answeredQuestions[currentQuestionIndex] !== null) {
+        return;
+      }
+
+      // Record the answer
+      answeredQuestions[currentQuestionIndex] = selectedIndex;
+
+      // Disable further clicks/keyboard events on options
+      Array.from(DOM.optionsContainer.children).forEach(opt => {
+        opt.onclick = null;
+        opt.onkeydown = null;
+        opt.classList.add('disabled-hover'); // Add class to remove hover effect
+      });
+
+      // Apply styling and feedback
+      applyAnswerState(currentQuestionIndex);
+
+      // Play appropriate sound and update score
+      if (selectedIndex === correctIndex) {
+        playSound(Sounds.correct);
+        score++;
+      } else {
+        playSound(Sounds.wrong);
+      }
+      
+      updateNavigationButtons();
+    }
+
+    /**
+     * Applies correct/incorrect styling and feedback text to options.
+     * Used after selection or when reviewing a question.
+     * @param {number} questionIndex - The index of the question to apply state for.
+     */
+    function applyAnswerState(questionIndex) {
+      const q = questions[questionIndex];
+      const selectedAnswerIndex = answeredQuestions[questionIndex];
+
+      // Reset all options' states first
+      Array.from(DOM.optionsContainer.children).forEach(opt => {
+          opt.classList.remove("correct", "incorrect");
+          const oldFeedback = opt.querySelector(".feedback-text");
+          if (oldFeedback) oldFeedback.remove();
+      });
+
+      const selectedOptionElement = DOM.optionsContainer.children[selectedAnswerIndex];
+      const correctOptionElement = DOM.optionsContainer.children[q.correct];
+
+      // Apply styling to selected option
+      if (selectedAnswerIndex === q.correct) {
+        selectedOptionElement.classList.add("correct");
+      } else {
+        selectedOptionElement.classList.add("incorrect");
+        // Highlight correct answer if user was wrong
+        if (correctOptionElement) {
+          correctOptionElement.classList.add("correct");
+        }
+      }
+
+      // Add feedback text to the selected option
+      const feedbackSpan = document.createElement("span");
+      feedbackSpan.className = "feedback-text";
+      feedbackSpan.textContent = q.options[selectedAnswerIndex].feedback;
+      selectedOptionElement.appendChild(feedbackSpan);
+    }
+
+    /**
+     * Updates the disabled state and text of navigation buttons.
+     */
+    function updateNavigationButtons() {
+      DOM.prevButton.disabled = currentQuestionIndex === 0 && !isReviewMode;
+      
+      if (isReviewMode) {
+          DOM.prevButton.textContent = currentQuestionIndex === 0 ? "Voltar aos Resultados" : "Anterior";
+          DOM.nextButton.textContent = currentQuestionIndex === questions.length - 1 ? "Voltar aos Resultados" : "Próxima";
+          DOM.nextButton.disabled = false; // Always enabled in review mode to allow navigating to end
+      } else {
+          DOM.prevButton.textContent = "Anterior";
+          DOM.nextButton.textContent = "Próxima";
+          DOM.nextButton.disabled = answeredQuestions[currentQuestionIndex] === null;
+
+          if (currentQuestionIndex === questions.length - 1 && answeredQuestions[currentQuestionIndex] !== null) {
+              DOM.nextButton.textContent = "Ver seu Desempenho";
+          }
+      }
+      // Special case: If in review mode and on the first question, prev button leads back to results
+      if (isReviewMode && currentQuestionIndex === 0) {
+        DOM.prevButton.disabled = false;
+      }
+      // Special case: If in review mode and on the last question, next button leads back to results
+      if (isReviewMode && currentQuestionIndex === questions.length -1) {
+        DOM.nextButton.disabled = false;
+      }
+    }
+
+    // --- Navigation Event Handlers ---
+    DOM.nextButton.onclick = () => {
+      if (currentQuestionIndex < questions.length - 1) {
+        currentQuestionIndex++;
+        showQuestion(currentQuestionIndex);
+      } else {
+        // If on last question: show results or go back from review mode
+        if (!isReviewMode) {
+          showResults();
+        } else {
+          hideQuizAndShowResults();
+        }
+      }
+    };
+
+    DOM.prevButton.onclick = () => {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        showQuestion(currentQuestionIndex);
+      } else {
+        // If on first question in review mode, go back to results
+        if (isReviewMode) {
+          hideQuizAndShowResults();
+        }
+      }
+    };
+
+    // --- Results & Review Functions ---
+
+    /** Hides the quiz container and shows the results area. */
+    function hideQuizAndShowResults() {
+        DOM.quizContainer.style.display = "none";
+        DOM.resultsArea.style.display = "block";
+        isReviewMode = false; // Ensure review mode is off when seeing results
+    }
+
+    /** Displays the final quiz results. */
+    function showResults() {
+      hideQuizAndShowResults();
+
+      DOM.scoreDisplay.textContent = `Sua Pontuação: ${score} de ${questions.length}`;
+
+      if (score === questions.length) {
+        DOM.feedbackMessage.textContent = "🎉 Parabéns! Você é um verdadeiro Expert em Sustentabilidade! Seu conhecimento é inspirador! ✨";
+        DOM.medalha.textContent = "🥇";
+        playSound(Sounds.applause);
+      } else if (score >= questions.length / 2) {
+        DOM.feedbackMessage.textContent = "👏 Muito bom! Você tem um ótimo desempenho! Continue aprendendo para se tornar um Guardião completo do Planeta! 🌱";
+        DOM.medalha.textContent = "🥈";
+        playSound(Sounds.finish);
+      } else {
+        DOM.feedbackMessage.textContent = "💡 Não desanime! Cada pergunta é uma oportunidade de aprendizado. Vamos revisar o que errou e tentar de novo para fortalecer seu saber verde! 💪";
+        DOM.medalha.textContent = "🥉";
+        playSound(Sounds.wrong);
+      }
+      DOM.reviewButton.focus(); // Focus on review button for accessibility
+    }
+
+    /** Initiates the review mode, showing answered questions. */
+    function reviewAnswers() {
+        isReviewMode = true;
+        currentQuestionIndex = 0; // Start review from the first question
+        DOM.quizContainer.style.display = "block";
+        DOM.resultsArea.style.display = "none";
+        showQuestion(currentQuestionIndex);
+        updateNavigationButtons();
+    }
+
+    /** Restarts the quiz by reloading the page. */
+    function restartQuiz() {
+      window.location.reload();
+    }
+
+    // --- Initial Setup ---
+    DOM.reviewButton.onclick = reviewAnswers;
+    DOM.restartButton.onclick = restartQuiz;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showQuestion(currentQuestionIndex);
+      updateNavigationButtons();
+    });
+  </script>
+</body>
 </html>
