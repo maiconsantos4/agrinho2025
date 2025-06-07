@@ -6,18 +6,20 @@
     <title>Contato - Portal Verde do Saber</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* CSS Variables for consistent theming */
         :root {
-            --verde-principal: #28a745; /* Um verde vibrante para botões e destaques */
-            --verde-medio: #4CAF50; /* Verde para links e cabeçalhos */
-            --verde-claro: #d4edda; /* Um verde muito claro para fundos sutis */
-            --cor-texto: #333; /* Cor geral do texto */
-            --cor-fundo-pagina: #f8f9fa; /* Fundo levemente acinzentado */
-            --cor-borda: #dee2e6; /* Borda para campos de formulário */
-            --sombra-leve: rgba(0, 0, 0, 0.1); /* Sombra para caixas */
+            --verde-principal: #28a745; /* Vibrant green for buttons and highlights */
+            --verde-medio: #4CAF50; /* Green for links and headers */
+            --verde-claro: #d4edda; /* Light green for subtle backgrounds */
+            --cor-texto: #333; /* General text color */
+            --cor-fundo-pagina: #f8f9fa; /* Light grey background */
+            --cor-borda: #dee2e6; /* Border for form fields */
+            --sombra-leve: rgba(0, 0, 0, 0.1); /* Light shadow for boxes */
             --padding-padrao: 20px;
             --border-radius-padrao: 8px;
         }
 
+        /* Base Body Styles */
         body {
             font-family: 'Roboto', sans-serif;
             line-height: 1.7;
@@ -31,6 +33,7 @@
             min-height: 100vh;
         }
 
+        /* Container for content */
         .container {
             background: #fff;
             padding: var(--padding-padrao) 40px;
@@ -38,9 +41,10 @@
             box-shadow: 0 5px 15px var(--sombra-leve);
             max-width: 900px;
             width: 100%;
-            margin: 40px auto; /* Centraliza e adiciona margem superior/inferior */
+            margin: 40px auto; /* Centers and adds top/bottom margin */
         }
 
+        /* Headings */
         h1, h2 {
             color: var(--verde-principal);
             text-align: center;
@@ -48,10 +52,12 @@
             font-weight: 700;
         }
 
+        /* Paragraphs */
         p {
             margin-bottom: 15px;
         }
 
+        /* Links */
         a {
             color: var(--verde-medio);
             text-decoration: none;
@@ -63,10 +69,12 @@
             text-decoration: underline;
         }
 
+        /* Strong text */
         strong {
             color: var(--verde-principal);
         }
 
+        /* Contact Information Section */
         .contact-info {
             display: flex;
             flex-wrap: wrap;
@@ -78,7 +86,7 @@
 
         .contact-info div {
             flex: 1;
-            min-width: 250px;
+            min-width: 280px; /* Slightly adjusted min-width for better spacing */
             background-color: var(--verde-claro);
             padding: 20px;
             border-radius: var(--border-radius-padrao);
@@ -95,6 +103,7 @@
             margin-bottom: 5px;
         }
 
+        /* Contact Form Section */
         .contact-form {
             background-color: #fefefe;
             padding: 30px;
@@ -113,12 +122,12 @@
         .contact-form input[type="text"],
         .contact-form input[type="email"],
         .contact-form textarea {
-            width: calc(100% - 22px); /* Ajuste para padding e borda */
+            width: calc(100% - 22px); /* Adjust for padding and border */
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid var(--cor-borda);
             border-radius: 4px;
-            box-sizing: border-box;
+            box-sizing: border-box; /* Ensures padding and border are included in the element's total width and height */
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
@@ -127,7 +136,7 @@
         .contact-form input[type="email"]:focus,
         .contact-form textarea:focus {
             border-color: var(--verde-principal);
-            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25);
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.25); /* Focus effect */
             outline: none;
         }
 
@@ -136,6 +145,7 @@
             min-height: 150px;
         }
 
+        /* Form Button */
         .contact-form button {
             background-color: var(--verde-principal);
             color: white;
@@ -146,38 +156,46 @@
             font-size: 1.1rem;
             font-weight: 700;
             transition: background-color 0.3s ease, transform 0.2s ease;
-            display: block; /* Para que o botão ocupe sua própria linha */
-            margin: 0 auto; /* Centraliza o botão */
+            display: block; /* Makes the button take its own line */
+            margin: 0 auto; /* Centers the button */
         }
 
         .contact-form button:hover {
-            background-color: #218838; /* Um verde um pouco mais escuro */
-            transform: translateY(-2px); /* Pequeno efeito ao passar o mouse */
+            background-color: #218838; /* Slightly darker green on hover */
+            transform: translateY(-2px); /* Subtle lift effect */
         }
 
-        .social-media {
+        /* Social Media Section */
+        .social-media-links {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 20px; /* Adjusted margin */
         }
 
-        .social-media a {
+        .social-media-links a {
             display: inline-block;
-            margin: 0 15px;
+            margin: 0 10px; /* Adjusted margin */
             transition: transform 0.3s ease;
         }
 
-        .social-media a:hover {
+        .social-media-links a:hover {
             transform: translateY(-3px);
         }
 
-        .social-media img {
+        .social-media-links img {
             width: 40px;
             height: 40px;
-            border-radius: 50%; /* Para ícones redondos */
+            border-radius: 50%; /* For round icons */
             box-shadow: 0 2px 5px var(--sombra-leve);
         }
 
-        /* Responsividade básica */
+        /* Horizontal Rule */
+        hr {
+            border: none;
+            border-top: 1px solid var(--verde-claro);
+            margin: 2rem 0;
+        }
+
+        /* Responsive Adjustments */
         @media (max-width: 768px) {
             .container {
                 margin: 20px;
@@ -208,15 +226,14 @@
             <div>
                 <h3>E-mail</h3>
                 <p>Para comunicação direta e detalhada:</p>
-                <p><strong><a href="mailto:contato@verdeeduca.com">contato@verdeeduca.com</a></strong></p>
+                <p><strong><a href="mailto:portalverdedosaber@gmail.com">portalverdedosaber@gmail.com</a></strong></p>
                 <p>Nossa equipe se esforça para responder todas as mensagens o mais rápido possível.</p>
             </div>
             <div>
                 <h3>Redes Sociais</h3>
                 <p>Siga-nos para as últimas novidades, dicas diárias e interaja com nossa comunidade:</p>
-                <p><strong>Instagram:</strong> <a href="https://www.instagram.com/seuperfil" target="_blank">@PortalVerdeDoSaber</a></p>
-                <div class="social-media">
-                    <a href="https://www.instagram.com/seuperfil" target="_blank" aria-label="Instagram do Portal Verde do Saber">
+                <div class="social-media-links">
+                    <a href="https://www.instagram.com/portalverdedosaber" target="_blank" rel="noopener noreferrer" aria-label="Instagram do Portal Verde do Saber">
                         <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Ícone do Instagram">
                     </a>
                     </div>
@@ -226,41 +243,25 @@
         <hr>
 
         <h2>Envie-nos uma Mensagem Direta</h2>
-        <p>Prefere nos enviar uma mensagem agora mesmo? Preencha o formulário abaixo. Quanto mais detalhes você puder fornecer, melhor poderemos ajudar!</p>
+        <p>Use o formulário abaixo para nos enviar sua pergunta, sugestão ou proposta de parceria. Responderemos o mais breve possível!</p>
 
-        <section id="contato" class="tab-content">
-            <h2>Fale Conosco</h2>
-            <p>Tem alguma pergunta, sugestão ou quer colaborar com o Portal Verde do Saber? Preencha o formulário abaixo ou entre em contato conosco pelos nossos canais. Estamos sempre abertos a novas ideias e parcerias!</p>
-    
-            <p><strong>E-mail:</strong> <a href="mailto:contato@verdeeduca.com" style="color: var(--verde-medio); text-decoration: none;">contato@verdeeduca.com</a></p>
-    
-            <div class="contact-social-links">
-                <p><strong>Redes Sociais:</strong> Siga-nos para as últimas novidades e interaja com nossa comunidade!</p>
-                <a href="https://www.instagram.com/portalverdedosaber" target="_blank" rel="noopener noreferrer" title="Instagram do Portal Verde do Saber">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e7/Instagram_logo_2016.svg" alt="Ícone do Instagram">
-                </a>
-                </div>
-    
-            <hr style="border-color: var(--verde-claro); margin: 2rem 0;">
-    
-            <h3>Envie-nos uma Mensagem</h3>
-            <p>Use o formulário abaixo para nos enviar sua pergunta, sugestão ou proposta de parceria. Responderemos o mais breve possível!</p>
-            <div class="contact-form">
-              <form action="https://formspree.io/f/YOUR_UNIQUE_ID" method="POST">
+        <section class="contact-form">
+            <form action="https://formspree.io/f/YOUR_UNIQUE_ID" method="POST">
                 <label for="nome">Nome Completo:</label>
                 <input type="text" id="nome" name="nome" placeholder="Seu nome" required>
-    
+
                 <label for="email">Seu Melhor E-mail:</label>
                 <input type="email" id="email" name="email" placeholder="nome@exemplo.com" required>
-    
+
                 <label for="assunto">Assunto da Mensagem:</label>
                 <input type="text" id="assunto" name="_subject" placeholder="Ex: Sugestão de tema, Parceria, Dúvida..." required>
+
                 <label for="mensagem">Sua Mensagem:</label>
                 <textarea id="mensagem" name="mensagem" placeholder="Descreva sua pergunta, sugestão ou proposta aqui..." required></textarea>
-    
+
                 <button type="submit">Enviar Mensagem</button>
-              </form>
-            </div>
-          </section>
+            </form>
+        </section>
+    </div>
 </body>
 </html>
